@@ -308,9 +308,9 @@ def chceck_exist_image(image_name: str):
     list_dir = os.listdir("images")
     if image_name in list_dir:
         print(f"CHECKED {image_name}")
-        return {"message": 1}
-
-    return {"message": 0}
+        return {"message": "E"}
+    else:
+        return {"message": "NE"}
 
 
 @app.get("/check_exist_document/{document_name}")
