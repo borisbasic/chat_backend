@@ -20,6 +20,7 @@ class Message(Base):
     receiver_id = Column(Integer, ForeignKey("users.id"))
     content = Column(String)
     message_uuid = Column(String)
+    type_of_message = Column(String)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
 

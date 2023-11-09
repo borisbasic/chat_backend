@@ -6,6 +6,7 @@ class MessageCreate(BaseModel):
     sender_id: int
     receiver_id: int
     content: str
+    type_of_message: str
 
 
 class UserBase(BaseModel):
@@ -48,6 +49,7 @@ class ChatVideo(BaseModel):
     sender_id: int
     receiver_id: int
     room_id: int
+
 
 class VideoDisplay(BaseModel):
     video_name: str

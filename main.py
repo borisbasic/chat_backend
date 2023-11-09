@@ -17,7 +17,7 @@ from schemas import (
     DocumentDisplay,
     ChatDocuments,
     VideoDisplay,
-    ChatVideo
+    ChatVideo,
 )
 from database.database import get_db
 from database.models import User, Message, Rooms, Images, Documents, Videos
@@ -33,8 +33,8 @@ import os
 app = FastAPI()
 
 ALLOWED_IMAGES_EXT = ["jpg", "png", "gif", "jpeg"]
-ALLOWED_DOCUMENTS_EXT = ["doc", "docx", "pdf"]
-ALLOWED_VIDEOS_EXT = ['mp4', 'divx']
+ALLOWED_DOCUMENTS_EXT = ["doc", "docx", "pdf", "txt"]
+ALLOWED_VIDEOS_EXT = ["mp4", "divx"]
 
 origins = ["http://localhost:3000"]  # we use this for our web application
 
@@ -85,6 +85,7 @@ async def websocket_endpoint(
                 sender_id=data["sender_id"],
                 receiver_id=data["receiver_id"],
                 content=data["message"],
+                type_of_message=data["type_of_message"],
             )
             db.add(new_room_message)
             db.commit()
@@ -122,6 +123,7 @@ def create_message(message: MessageCreate, db: Session = Depends(get_db)):
         sender_id=message.sender_id,
         receiver_id=message.receiver_id,
         content=message.content,
+        type_of_message=message.type_of_message,
     )
     db.add(db_message)
     db.commit()
@@ -223,7 +225,7 @@ def upload_image(image: UploadFile = File(...)):
             detail=f"Image with extension {ext} not acceptable",
         )
     full_name = filename.join(image.filename.rsplit(".", 1))
-    path = f"images/{full_name}"
+    path = f"images/{filename}{ext}"
     with open(path, "w+b") as buffer:
         shutil.copyfileobj(image.file, buffer)
     return {"filename": path}
@@ -253,7 +255,7 @@ def upload_image(document: UploadFile = File(...)):
             detail=f"Document with extension {ext} not acceptable",
         )
     full_name = filename.join(document.filename.rsplit(".", 1))
-    path = f"documents/{full_name}"
+    path = f"documents/{filename}{ext}"
     with open(path, "w+b") as buffer:
         shutil.copyfileobj(document.file, buffer)
     return {"filename": path}
@@ -283,7 +285,7 @@ def upload_image(video: UploadFile = File(...)):
             detail=f"Document with extension {ext} not acceptable",
         )
     full_name = filename.join(video.filename.rsplit(".", 1))
-    path = f"documents/{full_name}"
+    path = f"videos/{filename}{ext}"
     with open(path, "w+b") as buffer:
         shutil.copyfileobj(video.file, buffer)
     return {"filename": path}
@@ -291,7 +293,7 @@ def upload_image(video: UploadFile = File(...)):
 
 @app.post("/chat_video", response_model=VideoDisplay)
 def post_chat_image(request: ChatVideo, db: Session = Depends(get_db)):
-    new_video = Documents(
+    new_video = Videos(
         video_name=request.video_name,
         sender_video=request.sender_id,
         receiver_video=request.receiver_id,
@@ -320,6 +322,7 @@ def chceck_exist_document(document_name: str):
         print(document_name)
         return {"message": 1}
     return {"message": 0}
+
 
 @app.get("/check_exist_video/{video_name}")
 def chceck_exist_video(video_name: str):
