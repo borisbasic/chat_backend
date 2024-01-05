@@ -3,3 +3,6 @@ fastapi
 uvicorn[standard]==0.15.0
 gunicorn==20.1.0
 sqlalchemy
+pytest
+httpx
+python-multipart

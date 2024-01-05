@@ -305,34 +305,6 @@ def post_chat_image(request: ChatVideo, db: Session = Depends(get_db)):
     return new_video
 
 
-@app.get("/check_exist_image/{image_name}")
-def chceck_exist_image(image_name: str):
-    list_dir = os.listdir("images")
-    if image_name in list_dir:
-        print(f"CHECKED {image_name}")
-        return {"message": "E"}
-    else:
-        return {"message": "NE"}
-
-
-@app.get("/check_exist_document/{document_name}")
-def chceck_exist_document(document_name: str):
-    list_dir = os.listdir("documents")
-    if document_name in list_dir:
-        print(document_name)
-        return {"message": 1}
-    return {"message": 0}
-
-
-@app.get("/check_exist_video/{video_name}")
-def chceck_exist_video(video_name: str):
-    list_dir = os.listdir("videos")
-    if video_name in list_dir:
-        print(video_name)
-        return {"message": 1}
-    return {"message": 0}
-
-
 app.mount("/documents", StaticFiles(directory="documents"), name="documents")
 app.mount("/images", StaticFiles(directory="images"), name="images")
 app.mount("/videos", StaticFiles(directory="videos"), name="videos")
