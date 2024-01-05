@@ -2,4 +2,5 @@ venv
 images
 documents
 test.db
-videos
+video
+__pycache__

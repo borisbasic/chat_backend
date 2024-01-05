@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from cookiestxt import MozillaCookieJar
 
 
-__all__ = ['Session', 'get_session']
+__all__ = ["Session", "get_session"]
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
@@ -20,7 +20,9 @@ logger.setLevel(logging.WARN)
 
 def setup_webdriver():
     driver = webdriver.PhantomJS()
-    driver.set_window_size(1120, 550)  # https://realpython.com/blog/python/headless-selenium-testing-with-python-and-phantomjs/
+    driver.set_window_size(
+        1120, 550
+    )  # https://realpython.com/blog/python/headless-selenium-testing-with-python-and-phantomjs/
     return driver
 
 
@@ -29,10 +31,10 @@ def copy_cookies_to_session(driver, session):
     cookies = driver.get_cookies()
     for cookie in cookies:
         session.cookies.set(
-            cookie['name'],
-            cookie['value'],
-            domain=cookie['domain'],
-            path=cookie['path']
+            cookie["name"],
+            cookie["value"],
+            domain=cookie["domain"],
+            path=cookie["path"],
         )
 
 
@@ -78,7 +80,7 @@ class Session(requests.Session):
             copy_cookies_to_session(driver, self)
             assert self.is_logged_in()
         except:
-            driver.save_screenshot('/tmp/googlelogin_problem.png')
+            driver.save_screenshot("/tmp/googlelogin_problem.png")
             raise
         finally:
             driver.quit()
@@ -87,7 +89,7 @@ class Session(requests.Session):
         response = self.get(self.url, allow_redirects=False)
         if response.status_code == 302:
             login_url = "https://accounts.google.com/ServiceLogin"
-            return not response.headers['location'].startswith(login_url)
+            return not response.headers["location"].startswith(login_url)
         else:
             return response.status_code == 200
 
@@ -131,12 +133,12 @@ def get_session(cookies_path="cookies.txt", url=None, cls=Session):
 def main(argv=None):
     if argv is None:
         argv = sys.argv
-    parser = argparse.ArgumentParser(description='Login to Google')
-    parser.add_argument('cookies_path', help="path for cookies.  usually cookies.txt")
-    parser.add_argument('--url', help="URL of Google resource you're trying to access")
+    parser = argparse.ArgumentParser(description="Login to Google")
+    parser.add_argument("cookies_path", help="path for cookies.  usually cookies.txt")
+    parser.add_argument("--url", help="URL of Google resource you're trying to access")
     args = parser.parse_args(argv[1:])
     session = get_session(args.cookies_path, url=args.url)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -40,14 +40,18 @@ def client(session):
     yield TestClient(app)
 
 
-def test_login(client):
+def test_websocket(client):
     response = client.post("/register", json={"id": 1, "username": "boris"})
+    response_1 = client.post("/register", json={"id": 2, "username": "boris_1"})
 
-    assert response.status_code == 200
-    assert response.json()["message"] == "New user registered!"
+    response_room_number = client.get("/room_number/1/2")
 
-    response = client.post("/login", json={"username": "boris"})
-
-    assert response.status_code == 200
-    assert response.json()["username"] == "boris"
-    assert response.json()["id"] == 1
+    response_websocket = client.websocket_connect(f"/ws/1")
+    data = {
+        "sender_id": 1,
+        "receiver_id": 2,
+        "content": "First message",
+        "type_of_message": "text",
+    }
+    response_websocket.send_text(data)
+    assert response_websocket.receive_json()["message"] == "First message"

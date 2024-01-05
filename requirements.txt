@@ -6,3 +6,4 @@ sqlalchemy
 pytest
 httpx
 python-multipart
+black

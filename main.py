@@ -144,7 +144,7 @@ async def get_messages(sender_id: int, receiver_id: int, db: Session = Depends(g
     if not receiver:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with id: {sender_id} not found.",
+            detail=f"User with id: {receiver_id} not found.",
         )
 
     messages = (

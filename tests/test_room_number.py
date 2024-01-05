@@ -40,14 +40,21 @@ def client(session):
     yield TestClient(app)
 
 
-def test_login(client):
+def test_room_number(client):
     response = client.post("/register", json={"id": 1, "username": "boris"})
+    response_1 = client.post("/register", json={"id": 2, "username": "boris_1"})
 
-    assert response.status_code == 200
-    assert response.json()["message"] == "New user registered!"
+    response_room_number = client.get("/room_number/1/2")
 
-    response = client.post("/login", json={"username": "boris"})
+    assert response_room_number.status_code == 200
+    assert response_room_number.json()["id"] == 1
 
-    assert response.status_code == 200
-    assert response.json()["username"] == "boris"
-    assert response.json()["id"] == 1
+
+def test_room_number_not_exists(client):
+    response = client.post("/register", json={"id": 1, "username": "boris"})
+    response_1 = client.post("/register", json={"id": 2, "username": "boris_1"})
+
+    response_room_number = client.get("/room_number/1/3")
+
+    assert response_room_number.status_code == 404
+    assert response_room_number.json()["detail"] == "Room not found"
